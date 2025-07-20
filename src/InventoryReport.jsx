@@ -56,27 +56,27 @@ const InventoryReport = ({ products = [] }) => {
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 font-sans">
-      <h1 className="text-3xl font-bold text-gray-900 mb-6">Inventory Report</h1>
+      <h1 className="text-3xl font-bold text-gray-900 mb-6">รายงานสินค้าคงคลัง</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div className="bg-white p-6 rounded-xl shadow-lg flex items-center space-x-4">
             <div className="bg-blue-500 p-3 rounded-full text-white"><CubeIcon /></div>
             <div>
-                <h3 className="text-sm font-medium text-gray-500">Total Products (SKU)</h3>
+                <h3 className="text-sm font-medium text-gray-500">สินค้ารวม (SKU)</h3>
                 <p className="text-3xl font-bold text-gray-900">{summaryData.totalSKU}</p>
             </div>
         </div>
         <div className="bg-white p-6 rounded-xl shadow-lg flex items-center space-x-4">
             <div className="bg-teal-500 p-3 rounded-full text-white"><CollectionIcon /></div>
             <div>
-                <h3 className="text-sm font-medium text-gray-500">Total Items in Stock</h3>
+                <h3 className="text-sm font-medium text-gray-500">รายการทั้งหมดในสต็อก</h3>
                 <p className="text-3xl font-bold text-gray-900">{summaryData.totalItems.toLocaleString()}</p>
             </div>
         </div>
         <div className="bg-white p-6 rounded-xl shadow-lg flex items-center space-x-4">
             <div className="bg-amber-500 p-3 rounded-full text-white"><CashIcon /></div>
             <div>
-                <h3 className="text-sm font-medium text-gray-500">Total Stock Value</h3>
+                <h3 className="text-sm font-medium text-gray-500">มูลค่าสินค้าในสต็อกทั้งหมด</h3>
                 <p className="text-3xl font-bold text-gray-900">฿{summaryData.totalValue.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p>
             </div>
         </div>
@@ -111,7 +111,7 @@ const InventoryReport = ({ products = [] }) => {
         </div>
 
         <div className="lg:col-span-2 bg-white p-6 rounded-xl shadow-lg overflow-x-auto">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">All Products Details</h2>
+          <h2 className="text-xl font-semibold text-gray-800 mb-4">รายละเอียดสินค้าทั้งหมด</h2>
           <div className="mb-4">
             <input
               type="text"

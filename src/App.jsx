@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, NavLink } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, NavLink } from 'react-router-dom';
 import axios from 'axios';
 import io from 'socket.io-client';
 import { ToastContainer } from 'react-toastify';
@@ -13,6 +13,7 @@ import Stock from './Stock';
 import Dashboard from './Dashboard';
 import InventoryReport from './InventoryReport';
 import BarcodeGenerator from './BarcodeGenerator';
+import ShippingLabel from './ShippingLabel';
 import logo from './assets/logo.png';
 
 const socket = io('http://localhost:5000');
@@ -32,7 +33,7 @@ const App = () => {
         setProducts(productsRes.data);
         setSales(salesRes.data.sort((a, b) => b.id - a.id));
       } catch (error) {
-        console.error("Failed to fetch initial data", error);
+        console.error('Failed to fetch initial data', error);
       } finally {
         setLoading(false);
       }
@@ -44,10 +45,10 @@ const App = () => {
       console.log('App.jsx: Product list updated via socket!');
       setProducts(updatedProducts);
     });
-    
+
     socket.on('sale-updated', (updatedSales) => {
-        console.log('App.jsx: Sales list updated via socket!');
-        setSales(updatedSales.sort((a, b) => b.id - a.id));
+      console.log('App.jsx: Sales list updated via socket!');
+      setSales(updatedSales.sort((a, b) => b.id - a.id));
     });
 
     return () => {
@@ -56,12 +57,19 @@ const App = () => {
     };
   }, []);
 
-  const navLinkStyles = ({ isActive }) => {
-    return `block py-2.5 px-4 rounded-lg transition duration-200 text-sm ${isActive ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700 hover:text-white'}`;
-  };
+  const navLinkStyles = ({ isActive }) =>
+    `block py-2.5 px-4 rounded-lg transition duration-200 text-sm ${
+      isActive
+        ? 'bg-blue-600 text-white'
+        : 'text-gray-400 hover:bg-gray-700 hover:text-white'
+    }`;
 
   if (loading) {
-    return <div className="flex justify-center items-center h-screen bg-gray-900 text-white">Loading Application...</div>;
+    return (
+      <div className="flex justify-center items-center h-screen bg-gray-900 text-white">
+        Loading Application...
+      </div>
+    );
   }
 
   return (
@@ -69,17 +77,34 @@ const App = () => {
       <div className="flex h-screen bg-gray-100 font-sans">
         <aside className="w-64 bg-gray-800 text-white flex flex-col">
           <div className="flex items-center justify-center py-6 px-4">
-            <img src={logo} alt="Logo" className="h-24 w-35 w-auto" />
+            <img src={logo} alt="Logo" className="h-24 w-auto" />
           </div>
-          
+
           <nav className="flex-grow px-4 py-6 space-y-2">
-            <NavLink to="/" end className={navLinkStyles}>Home</NavLink>
-            <NavLink to="/pos" className={navLinkStyles}>POS</NavLink>
-            <NavLink to="/stock" className={navLinkStyles}>Stock</NavLink>
-            <NavLink to="/dashboard" className={navLinkStyles}>Dashboard</NavLink>
-            <NavLink to="/report" className={navLinkStyles}>Inventory Report</NavLink>
-            <NavLink to="/barcode" className={navLinkStyles}>Barcode Generator</NavLink>
-            <NavLink to="/history" className={navLinkStyles}>Sales History</NavLink>
+            <NavLink to="/" end className={navLinkStyles}>
+              หน้าหลัก
+            </NavLink>
+            <NavLink to="/pos" className={navLinkStyles}>
+              จุดขาย
+            </NavLink>
+            <NavLink to="/stock" className={navLinkStyles}>
+              คลังสินค้า
+            </NavLink>
+            <NavLink to="/dashboard" className={navLinkStyles}>
+              แดชบอร์ด
+            </NavLink>
+            <NavLink to="/report" className={navLinkStyles}>
+              รายงานสินค้าคงคลัง
+            </NavLink>
+            <NavLink to="/barcode" className={navLinkStyles}>
+              ปริ้นบาร์โค้ด
+            </NavLink>
+            <NavLink to="/history" className={navLinkStyles}>
+              ประวัติการขาย
+            </NavLink>
+            <NavLink to="/ShippingLabel" className={navLinkStyles}>
+              ปริ้นปะหน้า
+            </NavLink>
           </nav>
         </aside>
 
@@ -88,11 +113,11 @@ const App = () => {
             <Route path="/dashboard" element={<Dashboard products={products} sales={sales} />} />
             <Route path="/" element={<Home />} />
             <Route path="/pos" element={<POS products={products} />} />
-            {/* === จุดที่แก้ไข === */}
             <Route path="/stock" element={<Stock products={products} />} />
             <Route path="/report" element={<InventoryReport products={products} />} />
             <Route path="/barcode" element={<BarcodeGenerator products={products} />} />
             <Route path="/history" element={<SalesHistory sales={sales} loading={loading} />} />
+            <Route path="/ShippingLabel" element={<ShippingLabel products={products} />} />
           </Routes>
         </main>
       </div>

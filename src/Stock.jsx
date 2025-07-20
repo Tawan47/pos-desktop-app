@@ -118,18 +118,18 @@ const Stock = ({ products }) => { // รับ products จาก props
     <>
       <div className="p-4 sm:p-6 lg:p-8 space-y-8">
         <div className="flex justify-between items-center">
-          <h1 className="text-3xl font-bold text-gray-800">Manage Stock</h1>
+          <h1 className="text-3xl font-bold text-gray-800">จัดการสต็อก</h1>
           <button 
             onClick={() => { clearForm(); openModal(); }} 
             className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors flex items-center shadow-md"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" /></svg>
-            Add New Product
+            เพิ่มสินค้า
           </button>
         </div>
         
         <div className="bg-white p-6 rounded-xl shadow-lg">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">Receive Stock</h2>
+          <h2 className="text-xl font-semibold text-gray-800 mb-4">รับสินค้าเข้าคลัง</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-gray-700">Scan Barcode</label>
@@ -153,13 +153,13 @@ const Stock = ({ products }) => { // รับ products จาก props
                 />
               </div>
               <button onClick={receiveStock} className="md:col-span-3 w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg transition-colors text-base">
-                Add to Stock
+                เพิ่มลงสต๊อก
               </button>
           </div>
         </div>
 
         <div className="bg-white p-6 rounded-xl shadow-lg overflow-x-auto">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">Product List</h2>
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">รายการสินค้า</h2>
             <div className="mb-4">
                 <input
                     type="text"

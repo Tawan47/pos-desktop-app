@@ -151,7 +151,7 @@ const Dashboard = () => {
   return (
     <div className="p-4 sm:p-6 lg:p-8 font-sans bg-gray-50 min-h-full">
         <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-            <h1 className="text-3xl font-bold text-gray-900">Sales Dashboard</h1>
+            <h1 className="text-3xl font-bold text-gray-900">แดชบอร์ดการขาย</h1>
             <div className="flex items-center gap-4 bg-white p-2 rounded-lg shadow-sm">
                 <div>
                     <select value={timeFrame} onChange={(e) => setTimeFrame(e.target.value)} className="border-none bg-transparent focus:ring-0">
@@ -177,14 +177,14 @@ const Dashboard = () => {
             <div className="bg-white p-6 rounded-xl shadow-lg flex items-center space-x-4">
                 <div className="bg-indigo-500 p-3 rounded-full text-white"><ChartIcon /></div>
                 <div>
-                    <h3 className="text-sm font-medium text-gray-500">This Month's Sales</h3>
+                    <h3 className="text-sm font-medium text-gray-500">ยอดขายประจำเดือนนี้</h3>
                     <p className="text-3xl font-bold text-gray-900">฿{totalThisMonth.toFixed(2)}</p>
                 </div>
             </div>
             <div className="bg-white p-6 rounded-xl shadow-lg flex items-center space-x-4 border-2 border-green-500">
                 <div className="bg-green-500 p-3 rounded-full text-white"><CalendarIcon /></div>
                 <div>
-                    <h3 className="text-sm font-medium text-gray-500">Today's Sales</h3>
+                    <h3 className="text-sm font-medium text-gray-500">ยอดขายวันนี้</h3>
                     <p className="text-3xl font-bold text-gray-900">฿{totalToday.toFixed(2)}</p>
                 </div>
             </div>
@@ -200,7 +200,7 @@ const Dashboard = () => {
             <div className="bg-white p-6 rounded-xl shadow-lg flex items-center space-x-4">
                 <div className="bg-red-500 p-3 rounded-full text-white"><AlertIcon /></div>
                 <div>
-                    <h3 className="text-sm font-medium text-gray-500">Low Stock Items</h3>
+                    <h3 className="text-sm font-medium text-gray-500">รายการสต็อกต่ำ</h3>
                     <p className="text-3xl font-bold text-gray-900">{lowStockCount} <span className="text-lg font-normal">items</span></p>
                 </div>
             </div>
@@ -208,7 +208,7 @@ const Dashboard = () => {
 
         <div className="bg-white p-6 rounded-xl shadow-lg min-h-[460px]">
             <h2 className="text-xl font-semibold text-gray-800 mb-4">
-              Sales Chart ({timeFrame === 'monthly' ? formatMonthYear(selectedMonth) : new Date(selectedDate).toLocaleDateString('th-TH', { dateStyle: 'long' })})
+              แผนภูมิการขาย ({timeFrame === 'monthly' ? formatMonthYear(selectedMonth) : new Date(selectedDate).toLocaleDateString('th-TH', { dateStyle: 'long' })})
             </h2>
             <div className="w-full h-[400px]">
                 {loading ? (

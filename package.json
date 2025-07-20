@@ -1,11 +1,14 @@
 {
   "name": "my-vite-app",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
+  "main": "main.cjs",
   "scripts": {
     "dev": "vite",
+    "electron:dev": "npm run build && electron .",
     "build": "vite build",
+    "dist": "electron-builder",
     "lint": "eslint .",
     "preview": "vite preview"
   },
@@ -13,6 +16,9 @@
     "@fortawesome/fontawesome-free": "^6.7.2",
     "@headlessui/react": "^2.2.4",
     "axios": "^1.10.0",
+    "electron-updater": "^6.6.2",
+    "promptpay-qr": "^0.5.0",
+    "qrcode": "^1.5.4",
     "react": "^19.1.0",
     "react-barcode": "^1.6.1",
     "react-dom": "^19.1.0",
@@ -28,6 +34,8 @@
     "@types/react-dom": "^19.1.2",
     "@vitejs/plugin-react": "^4.4.1",
     "autoprefixer": "^10.4.21",
+    "electron": "^25.9.8",
+    "electron-builder": "^24.13.3",
     "eslint": "^9.25.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.19",
@@ -35,5 +43,47 @@
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.10",
     "vite": "^6.3.5"
+  },
+  "build": {
+    "appId": "com.yourdomain.myapp",
+    "productName": "my-vite-app",
+     "publish": {
+    "provider": "github",
+    "owner": "Tawan47",
+    "repo": "your-github-repository-name"
+  },
+    "files": [
+      "dist/**/*",
+      "main.cjs",
+      "preload.js",
+      "shop-logo.png"
+    ],
+    "extraResources": [
+      {
+        "from": "./inventory.db",
+        "to": "inventory.db"
+      },
+      {
+        "from": "./backend",
+        "to": "backend"
+      },
+      {
+        "from": "./resources",
+        "to": "resources"
+      }
+    ],
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "icon": "public/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true,
+      "deleteAppDataOnUninstall": false
+    }
   }
 }
