@@ -1,6 +1,6 @@
 // main.cjs
 const { app, BrowserWindow, ipcMain } = require('electron');
-const { autoUpdater } = require('electron-updater'); // 1. เพิ่มการ require
+const { autoUpdater } = require('electron-updater');
 const path = require('path');
 const { spawn } = require('child_process');
 const fs = require('fs');
@@ -20,25 +20,26 @@ function startBackend() {
     let spawnOptions;
 
     if (isDev) {
-        // --- โหมด Development ---
-        console.log('Running in Development mode.');
+        // --- Development Mode (NestJS & Next.js) ---
+        console.log('Running in Development mode (NestJS/Next.js).');
         nodePath = process.execPath;
-        backendPath = path.join(__dirname, 'backend', 'server.js');
-        serverWorkingDirectory = path.join(__dirname, 'backend');
+        // Point to the built NestJS main file (if start via node) or use npm run
+        backendPath = path.join(__dirname, 'backend-nest', 'dist', 'main.js');
+        serverWorkingDirectory = path.join(__dirname, 'backend-nest');
         spawnOptions = {
             cwd: serverWorkingDirectory,
             stdio: 'inherit'
         };
     } else {
-        // --- โหมด Production (หลัง Build เป็น EXE) ---
-        console.log('Running in Production mode with detached process.');
+        // --- Production Mode ---
+        console.log('Running in Production mode.');
         nodePath = path.join(process.resourcesPath, 'resources', 'node.exe');
-        backendPath = path.join(process.resourcesPath, 'backend', 'server.js');
-        serverWorkingDirectory = path.join(process.resourcesPath, 'backend');
+        backendPath = path.join(process.resourcesPath, 'backend-nest', 'dist', 'main.js');
+        serverWorkingDirectory = path.join(process.resourcesPath, 'backend-nest');
         spawnOptions = {
             cwd: serverWorkingDirectory,
-            stdio: 'ignore',  // ไม่ต้องเชื่อมต่อ stdio
-            detached: true    // รัน process แยกออกไปเลย
+            stdio: 'ignore',
+            detached: true 
         };
     }
 
@@ -53,10 +54,12 @@ function startBackend() {
     }
 
     try {
-        serverProcess = spawn(nodePath, [backendPath], spawnOptions);
+        // --- <<< จุดแก้ไขหลัก >>> ---
+        const userDataPath = app.getPath('userData'); // 1. ดึงตำแหน่ง AppData
+        // 2. เพิ่ม userDataPath เป็นอาร์กิวเมนต์ตอนเรียก spawn
+        serverProcess = spawn(nodePath, [backendPath, userDataPath], spawnOptions);
 
         if (!isDev) {
-            // สั่งให้โปรแกรมหลักไม่ต้องรอ process ลูก
             serverProcess.unref();
         }
 
@@ -79,13 +82,15 @@ function createWindow() {
         }
     });
 
-    // ตรวจสอบว่ากำลังรันในโหมดพัฒนา (มี VITE_DEV_SERVER_URL) หรือไม่
     if (process.env.VITE_DEV_SERVER_URL) {
-        // โหมดพัฒนา: โหลด URL จาก Vite Dev Server
         mainWindow.loadURL(process.env.VITE_DEV_SERVER_URL);
+    } else if (app.isPackaged) {
+        // In production, we might use a static export or its own server
+        // For now, assume it's loading a local server or a built dist
+        mainWindow.loadURL('http://localhost:3000'); 
     } else {
-        // โหมดใช้งานจริง: โหลดไฟล์ index.html โดยตรง
-        mainWindow.loadFile(path.join(__dirname, 'dist', 'index.html'));
+        // In dev, Next.js usually runs on 3000
+        mainWindow.loadURL('http://localhost:3000');
     }
 }
 
@@ -101,7 +106,79 @@ ipcMain.handle('get-logo-data', async () => {
     }
 });
 
-// รับคำสั่งปริ้นท์จากหน้าแอป
+// รับคำสั่งปริ้นท์ใบเสร็จ (ใหม่)
+ipcMain.on('print-receipt', (event, saleData) => {
+    console.log('--- Received print-receipt command ---');
+    
+    // สร้าง HTML สำหรับใบเสร็จ (ตัวอย่างเบื้องต้น)
+    const itemsHtml = saleData.items.map(item => `
+        <tr>
+            <td>${item.name}</td>
+            <td style="text-align: right;">${item.qty} x ${item.price}</td>
+            <td style="text-align: right;">${(item.qty * item.price).toFixed(2)}</td>
+        </tr>
+    `).join('');
+
+    const receiptHtml = `
+        <html>
+        <head>
+            <style>
+                body { font-family: sans-serif; font-size: 12px; width: 300px; padding: 10px; }
+                table { width: 100%; border-collapse: collapse; }
+                .text-center { text-align: center; }
+                .text-right { text-align: right; }
+                .divider { border-top: 1px dashed #000; margin: 10px 0; }
+            </style>
+        </head>
+        <body>
+            <h2 class="text-center">ใบเสร็จรับเงิน</h2>
+            <div class="text-center">เลขที่: ${saleData.invoiceNumber}</div>
+            <div class="text-center">วันที่: ${new Date(saleData.date).toLocaleString()}</div>
+            <div class="divider"></div>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="text-align: left;">รายการ</th>
+                        <th style="text-align: right;">จำนวน</th>
+                        <th style="text-align: right;">รวม</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${itemsHtml}
+                </tbody>
+            </table>
+            <div class="divider"></div>
+            <div class="text-right"><strong>ยอดรวม: ${saleData.total.toFixed(2)}</strong></div>
+            <div class="text-right">วิธีชำระ: ${saleData.paymentMethod}</div>
+            <div class="divider"></div>
+            <div class="text-center">ขอบคุณที่ใช้บริการ</div>
+        </body>
+        </html>
+    `;
+
+    const printWindow = new BrowserWindow({
+        width: 400,
+        height: 600,
+        show: false,
+        parent: mainWindow,
+    });
+
+    printWindow.setMenu(null);
+    printWindow.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(receiptHtml)}`);
+    
+    printWindow.webContents.once('did-finish-load', () => {
+        printWindow.webContents.print({ silent: false }, (success, failureReason) => {
+            if (!success && failureReason !== 'cancelled') {
+                console.error(`Printing failed: ${failureReason}`);
+            }
+            if (!printWindow.isDestroyed()) {
+                printWindow.close();
+            }
+        });
+    });
+});
+
+// รับคำสั่งปริ้นท์จากหน้าแอป (แบบเก่า)
 ipcMain.on('print-component', (event, htmlContent) => {
     console.log('--- Received print command (new window method) ---');
     
@@ -134,7 +211,6 @@ ipcMain.on('print-component', (event, htmlContent) => {
 app.whenReady().then(() => {
     startBackend();
     createWindow();
-    // 2. เรียกใช้ autoUpdater เพื่อเช็คอัปเดต
     autoUpdater.checkForUpdatesAndNotify();
 });
 

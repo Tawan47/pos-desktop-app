@@ -13,36 +13,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@fortawesome/fontawesome-free": "^6.7.2",
-    "@headlessui/react": "^2.2.4",
-    "axios": "^1.10.0",
-    "electron-updater": "^6.6.2",
-    "promptpay-qr": "^0.5.0",
-    "qrcode": "^1.5.4",
-    "react": "^19.1.0",
-    "react-barcode": "^1.6.1",
-    "react-dom": "^19.1.0",
-    "react-router-dom": "^7.6.2",
-    "react-toastify": "^11.0.5",
-    "recharts": "^2.15.3",
-    "socket.io-client": "^4.8.1"
+    "electron-updater": "^6.6.2"
   },
   "devDependencies": {
-    "@eslint/js": "^9.25.0",
-    "@tailwindcss/postcss": "^4.1.10",
-    "@types/react": "^19.1.2",
-    "@types/react-dom": "^19.1.2",
-    "@vitejs/plugin-react": "^4.4.1",
-    "autoprefixer": "^10.4.21",
     "electron": "^25.9.8",
-    "electron-builder": "^24.13.3",
-    "eslint": "^9.25.0",
-    "eslint-plugin-react-hooks": "^5.2.0",
-    "eslint-plugin-react-refresh": "^0.4.19",
-    "globals": "^16.0.0",
-    "postcss": "^8.5.6",
-    "tailwindcss": "^4.1.10",
-    "vite": "^6.3.5"
+    "electron-builder": "^24.13.3"
   },
   "build": {
     "appId": "com.yourdomain.myapp",
@@ -50,13 +25,14 @@
      "publish": {
     "provider": "github",
     "owner": "Tawan47",
-    "repo": "your-github-repository-name"
+    "repo": "pos-desktop-app"
   },
     "files": [
-      "dist/**/*",
       "main.cjs",
       "preload.js",
-      "shop-logo.png"
+      "shop-logo.png",
+      "backend-nest/dist/**/*",
+      "frontend-next/.next/**/*"
     ],
     "extraResources": [
       {
@@ -64,8 +40,8 @@
         "to": "inventory.db"
       },
       {
-        "from": "./backend",
-        "to": "backend"
+        "from": "./backend-nest/dist",
+        "to": "backend-nest/dist"
       },
       {
         "from": "./resources",
